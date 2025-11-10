@@ -1,4 +1,4 @@
-const { MongoClient, ServerApiVersion } = require("mongodb");
+const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
 const express = require("express");
 const cors = require("cors");
 const app = express();
@@ -20,7 +20,7 @@ const client = new MongoClient(uri, {
 async function run() {
   try {
     await client.connect();
-    const db = client.db("PawMart_db");
+    const db = client.db("pawmartDB");
     const listingsCollection = db.collection("listings");
     const ordersCollection = db.collection("orders");
     const userCollection = db.collection("users");
@@ -29,14 +29,25 @@ async function run() {
       res.send("Hello World!");
     });
 
-    app.get("/listings", async (req, res) => {
+    // ========== LISTINGS ENDPOINTS ==========
+
+    // Get all listings
+    app.get("/api/listings", async (req, res) => {
+      const category = req.query.category;
+      const query = category ? { category: category } : {};
+      const listings = await listingsCollection.find(query).toArray();
+      res.send(listings);
+    });
+    /*  app.get("/listings", async (req, res) => {
       const result = await listingsCollection.find().toArray();
       res.send(result);
-    });
+    }); */
 
-    app.post("/listings", async (req, res) => {
-      const newListings = req.body;
-      const result = await listingsCollection.insertOne(newListings);
+    // Get listings by category for category page
+    app.get("/api/listings/category/:categoryName", async (req, res) => {
+      const categoryName = req.params.categoryName;
+      const query = { category: categoryName };
+      const result = await listingsCollection.find(query).toArray();
       res.send(result);
     });
 
