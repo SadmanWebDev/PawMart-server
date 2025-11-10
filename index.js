@@ -2,6 +2,7 @@ const { MongoClient, ServerApiVersion } = require("mongodb");
 const express = require("express");
 const cors = require("cors");
 const app = express();
+require("dotenv").config();
 const port = process.env.PORT || 3000;
 
 app.use(cors());
@@ -19,9 +20,24 @@ const client = new MongoClient(uri, {
 async function run() {
   try {
     await client.connect();
+    const db = client.db("PawMart_db");
+    const listingsCollection = db.collection("listings");
+    const ordersCollection = db.collection("orders");
+    const userCollection = db.collection("users");
 
     app.get("/", (req, res) => {
       res.send("Hello World!");
+    });
+
+    app.get("/listings", async (req, res) => {
+      const result = await listingsCollection.find().toArray();
+      res.send(result);
+    });
+
+    app.post("/listings", async (req, res) => {
+      const newListings = req.body;
+      const result = await listingsCollection.insertOne(newListings);
+      res.send(result);
     });
 
     await client.db("admin").command({ ping: 1 });
