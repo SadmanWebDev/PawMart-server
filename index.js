@@ -1,9 +1,9 @@
 const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
+const port = process.env.PORT || 3000;
 const express = require("express");
 const cors = require("cors");
-const app = express();
 require("dotenv").config();
-const port = process.env.PORT || 3000;
+const app = express();
 
 app.use(cors());
 app.use(express.json());
@@ -29,7 +29,7 @@ async function run() {
       res.send("Hello World!");
     });
 
-    // ========== LISTINGS ENDPOINTS ==========
+    // LISTINGS
 
     // Get all listings
     app.get("/api/listings", async (req, res) => {
@@ -38,10 +38,6 @@ async function run() {
       const listings = await listingsCollection.find(query).toArray();
       res.send(listings);
     });
-    /*  app.get("/listings", async (req, res) => {
-      const result = await listingsCollection.find().toArray();
-      res.send(result);
-    }); */
 
     // Get recent 6 listings for home page
     app.get("/api/listings/recent", async (req, res) => {
@@ -63,17 +59,13 @@ async function run() {
 
     // Get single listing by ID
     app.get("/api/listings/:id", async (req, res) => {
-      try {
-        const id = req.params.id;
-        const query = { _id: new ObjectId(id) };
-        const listing = await listingsCollection.findOne(query);
-        if (listing) {
-          res.send(listing);
-        } else {
-          res.status(404).send({ message: "Listing not found" });
-        }
-      } catch (error) {
-        res.status(500).send({ message: "Error fetching listing", error });
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) };
+      const result = await listingsCollection.findOne(query);
+      if (result) {
+        res.send(result);
+      } else {
+        res.status(404).send({ message: "Listing not found" });
       }
     });
 
@@ -116,6 +108,21 @@ async function run() {
       res.send(result);
     });
 
+    // ORDERS
+
+    // Create new order
+    app.post("/api/orders", async (req, res) => {
+      const order = req.body;
+      const result = await ordersCollection.insertOne(order);
+      res.send(result);
+    });
+
+    // Get all orders for a user
+    app.get("/api/orders/:email", async (req, res) => {
+      const email = req.params.email;
+      const result = await ordersCollection.find({ email: email }).toArray();
+      res.send(result);
+    });
 
     await client.db("admin").command({ ping: 1 });
     console.log(
