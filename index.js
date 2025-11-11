@@ -19,14 +19,14 @@ const client = new MongoClient(uri, {
 });
 async function run() {
   try {
-    await client.connect();
+    // await client.connect();
     const db = client.db("pawmartDB");
     const listingsCollection = db.collection("listings");
     const ordersCollection = db.collection("orders");
     const userCollection = db.collection("users");
 
     app.get("/", (req, res) => {
-      res.send("Hello World!");
+      res.send("بسم الله الرحمن الرحيم");
     });
 
     // LISTINGS
@@ -124,10 +124,10 @@ async function run() {
       res.send(result);
     });
 
-    await client.db("admin").command({ ping: 1 });
-    console.log(
-      "Pinged your deployment. You successfully connected to MongoDB!"
-    );
+    // await client.db("admin").command({ ping: 1 });
+    // console.log(
+    //   "Pinged your deployment. You successfully connected to MongoDB!"
+    // );
   } finally {
   }
 }
