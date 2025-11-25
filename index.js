@@ -29,7 +29,6 @@ async function run() {
       res.send("بسم الله الرحمن الرحيم");
     });
 
-    // LISTINGS
     // Get all listings
     app.get("/api/listings", async (req, res) => {
       const category = req.query.category;
@@ -103,7 +102,6 @@ async function run() {
       res.send(result);
     });
 
-    // ORDERS
     // Create new order
     app.post("/api/orders", async (req, res) => {
       const order = req.body;
