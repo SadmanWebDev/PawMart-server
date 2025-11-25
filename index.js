@@ -17,9 +17,9 @@ const client = new MongoClient(uri, {
     deprecationErrors: true,
   },
 });
+
 async function run() {
   try {
-    // await client.connect();
     const db = client.db("pawmartDB");
     const listingsCollection = db.collection("listings");
     const ordersCollection = db.collection("orders");
@@ -30,7 +30,6 @@ async function run() {
     });
 
     // LISTINGS
-
     // Get all listings
     app.get("/api/listings", async (req, res) => {
       const category = req.query.category;
@@ -62,11 +61,7 @@ async function run() {
       const id = req.params.id;
       const query = { _id: new ObjectId(id) };
       const result = await listingsCollection.findOne(query);
-      if (result) {
-        res.send(result);
-      } else {
-        res.status(404).send({ message: "Listing not found" });
-      }
+      res.send(result);
     });
 
     // Get listings by user email
@@ -109,7 +104,6 @@ async function run() {
     });
 
     // ORDERS
-
     // Create new order
     app.post("/api/orders", async (req, res) => {
       const order = req.body;
@@ -123,11 +117,6 @@ async function run() {
       const result = await ordersCollection.find({ email: email }).toArray();
       res.send(result);
     });
-
-    // await client.db("admin").command({ ping: 1 });
-    // console.log(
-    //   "Pinged your deployment. You successfully connected to MongoDB!"
-    // );
   } finally {
   }
 }
